@@ -1,0 +1,3 @@
+[submodule "artistic-videos"]
+	path = artistic-videos
+	url = https://github.com/n1ckfg/artistic-videos
