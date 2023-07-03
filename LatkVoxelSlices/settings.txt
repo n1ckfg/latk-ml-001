@@ -1,11 +1,5 @@
-Volume Width
-128
-
-Volume Height
-128
-
-Volume Depth
-128
+Volume Size
+64
 
 Display Scale Factor
 10
@@ -16,5 +10,11 @@ Subpoint Steps
 Global Scale
 500
 
-Load Slices
+Load Slices on Startup
+false
+
+Draw Mouse
+true
+
+Style Transfer
 false

@@ -46,7 +46,7 @@ void keyPressed(){
     }
     if (keyCode==34) {
       loc.z ++;
-      if(loc.z>sD-1) loc.z=sD-1;
+      if(loc.z>dim-1) loc.z=dim-1;
     }
     if (keyCode==33) {
       loc.z --;
@@ -54,7 +54,7 @@ void keyPressed(){
     }
     if (keyCode==RIGHT) {
       loc.x ++;
-      if(loc.x>sW-1) loc.x=sW-1;
+      if(loc.x>dim-1) loc.x=dim-1;
     }
     if (keyCode==LEFT) {
       loc.x --;
@@ -62,7 +62,7 @@ void keyPressed(){
     }
     if (keyCode==DOWN) {
       loc.y ++;
-      if(loc.y>sH-1) loc.y=sH-1;
+      if(loc.y>dim-1) loc.y=dim-1;
     }
     if (keyCode==UP) {
       loc.y --;

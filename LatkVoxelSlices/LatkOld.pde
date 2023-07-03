@@ -6,7 +6,6 @@ JSONObject jsonStroke;
 JSONObject jsonPoint;
 
 String jsonFilename = "layer_test";
-float globalScale = 500;
 boolean showStrokes = true;
 ArrayList<Stroke> tempStrokes = new ArrayList<Stroke>();
 Stroke[] strokes;

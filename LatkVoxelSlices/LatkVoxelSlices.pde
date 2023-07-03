@@ -1,4 +1,3 @@
-//import java.awt.event.*;
 import peasy.*;
 
 int subPointSteps = 5;
@@ -6,13 +5,12 @@ boolean drawMouse = false;
 boolean selectMouse = false;
 int sliceCounter = 0;
 color vbgColor = color(0,0);
-
 boolean doLoadSlices = false;
+float globalScale = 500;
+boolean doStyleTransfer = true;
 
 PeasyCam cam;
-int sW = 64;
-int sH = 64;
-int sD = 64;
+int dim = 64;
 int scaleFactor=10;
 int dW = 1920;
 int dH = 1080;
@@ -29,37 +27,34 @@ Voxel[][][] voxel;
 void setup() {
   size(50,50,P3D);
   settings = new Settings("settings.txt");
-  voxel = new Voxel[sW][sH][sD];
-  surface.setSize(sW*scaleFactor, sH*scaleFactor);
- /*
- addMouseWheelListener(new MouseWheelListener() { 
-    public void mouseWheelMoved(MouseWheelEvent mwe) { 
-      mouseWheel(mwe.getWheelRotation());
-  }});
-  */
+  voxel = new Voxel[dim][dim][dim];
+  surface.setSize(dim*scaleFactor, dim*scaleFactor);
+
   initVolume();
   initLatk();
   noCursor();
   frameRate(fps);
-  cam = new PeasyCam(this,width/2,height/2,(width+height)/4, 500);
+  //cam = new PeasyCam(this, width/2, height/2, (width+height)/4, 500);
+  cam = new PeasyCam(this, 5000);
   //cam.setMinimumDistance(50);
   //cam.setMaximumDistance(500);
+  
+  styleSetup();
 }
 
 void draw() {
   controls();
   background(0);
   
-  //println(triggered);
   refreshLatk();
 
   if (!doLoadSlices) {
-    //buildVolume();
+    buildVolume();
   } else {
-    //loadSlices();
+    loadSlices();
   }
   
-  //refreshVolume();
+  refreshVolume();
   
   surface.setTitle(int(frameRate) + " fps");
 }
@@ -71,13 +66,27 @@ void saveSlices() {
     slice.loadPixels();
     for (int i=0;i<voxel.length;i++) {
       for (int j=0;j<voxel[i].length;j++) {
-        //int pos = x + y * width;
         int pos = i + j * voxel.length;
         slice.pixels[pos] = voxel[i][j][k].c;
       }
     }
     slice.updatePixels();
     slice.endDraw();
+    
+    if (doStyleTransfer) {
+      PImage styledSlice = styleInference(slice.get());
+      styledSlice.loadPixels();
+      for (int i=0; i<styledSlice.pixels.length; i++) {
+        color col = slice.pixels[i];
+        color colStyled = styledSlice.pixels[i];
+        col = color(red(colStyled), green(colStyled), blue(colStyled), alpha(col));
+        styledSlice.pixels[i] = col;
+      }
+      slice.beginDraw();
+      slice.image(styledSlice, 0, 0, slice.width, slice.height);
+      slice.endDraw();
+    }
+    
     slice.save("slices/test" + k + ".png");
     println("saved img " + k);
   }
@@ -85,12 +94,10 @@ void saveSlices() {
 
 void loadSlices() {
   if (sliceCounter < voxel[0][0].length) {
-  //for (int k=0;k<voxel[0][0].length;k++) {
     PImage slice = loadImage("slices/test" + sliceCounter + ".png");
     slice.loadPixels();
     for (int i=0;i<voxel.length;i++) {
       for (int j=0;j<voxel[i].length;j++) {
-        //int pos = x + y * width;
         int pos = i + j * voxel.length;
         if (alpha(slice.pixels[pos]) > 0) {
           voxel[i][j][sliceCounter].c = slice.pixels[pos];
@@ -109,11 +116,11 @@ void loadSlices() {
 }
 
 void posCheck(){
-    if (loc.z > sD - 1) loc.z = sD - 1;
+    if (loc.z > dim - 1) loc.z = dim - 1;
     if (loc.z < 0) loc.z = 0;
-    if (loc.x > sW - 1) loc.x = sW - 1;
+    if (loc.x > dim - 1) loc.x = dim - 1;
     if (loc.x < 0) loc.x = 0;
-    if (loc.y > sH - 1) loc.y = sH - 1;
+    if (loc.y > dim - 1) loc.y = dim - 1;
     if (loc.y < 0) loc.y = 0;
 }
 
@@ -122,9 +129,9 @@ void findCollision(PVector p, color c) {
     for (int j=0;j<voxel[i].length;j++) {
       for (int k=0;k<voxel[i][j].length;k++) {
         if (!voxel[i][j][k].drawMe) {
-          PVector hitBox = new PVector(scaleFactor, scaleFactor, scaleFactor);
-          //if (hitDetect3D(p, new PVector(1,1,1), voxel[i][j][k].p, new PVector(voxel[i][j][k].s, voxel[i][j][k].s, voxel[i][j][k].s))) {
-          if (hitDetect3D(p, hitBox, voxel[i][j][k].p, hitBox)) {
+          //PVector hitBox = new PVector(scaleFactor, scaleFactor, scaleFactor);
+          //if (hitDetect3D(p, hitBox, voxel[i][j][k].p, hitBox)) {
+          if (hitDetect(p, voxel[i][j][k].p, scaleFactor)) {
             voxel[i][j][k].drawMe = true;
             voxel[i][j][k].c = c;
           }
@@ -149,23 +156,17 @@ void buildVolume() {
   if (strokeCounter < strokes.length) {
     if (strokeCounter==0) println("STARTED rendering volume...");
     for (int i=1; i<strokes[strokeCounter].p.length; i++) {
-      //if (getDist(strokes[strokeCounter].p[i], strokes[strokeCounter].p[i-1]) > scaleFactor) {
         PVector[] subPoints = pointsAlongLine(strokes[strokeCounter].p[i], strokes[strokeCounter].p[i-1], subPointSteps);
         for (int j=0; j<subPoints.length; j++) {
           findCollision(subPoints[j], strokes[strokeCounter].c);
         }
-      //} else {
-        //findCollision(strokes[strokeCounter].p[i], strokes[strokeCounter].c);
-      //}
     }
     println("Stroke " + (strokeCounter + 1) + " / " + strokes.length); 
     strokeCounter++;
     if (strokeCounter >= strokes.length) {
-      //objMain();
-      //mayaKeysMain();
-      //blenderKeysMain();
       saveSlices();
       println("...FINISHED rendering volume.");
+      doLoadSlices = true;
     }
   }
 }

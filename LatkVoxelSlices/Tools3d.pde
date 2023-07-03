@@ -62,6 +62,7 @@ float gravity(float v1, float v2, float v3) { //y pos, floor num, gravity num
 
 //-------------------------------
 
+/*
 //2D Hit Detect.  Assumes center.  x,y,w,h of object 1, x,y,w,h, of object 2.
 boolean hitDetect(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
   w1 /= 2;
@@ -94,6 +95,15 @@ boolean hitDetect3D(PVector p1, PVector s1, PVector p2, PVector s2) {
     } else {
       return false;
     }
+}
+*/
+
+boolean hitDetect(PVector p1, PVector p2, float dist) {
+  if (p1.dist(p2) < dist) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //-------------------------------

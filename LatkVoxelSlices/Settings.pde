@@ -12,13 +12,13 @@ class Settings {
     try {
       data = loadStrings(name);
       for (int i=0;i<data.length;i++) {
-        if (data[i].equals("Volume Width")) sW = readInt(i);
-        if (data[i].equals("Volume Height")) sH = readInt(i);
-        if (data[i].equals("Volume Depth")) sD = readInt(i);
+        if (data[i].equals("Volume Size")) dim = readInt(i);
         if (data[i].equals("Display Scale Factor")) scaleFactor = readInt(i);
         if (data[i].equals("Subpoint Steps")) subPointSteps = readInt(i);
         if (data[i].equals("Global Scale")) globalScale = readFloat(i);
-        if (data[i].equals("Load Slices")) doLoadSlices = readBoolean(i);
+        if (data[i].equals("Load Slices on Startup")) doLoadSlices = readBoolean(i);
+        if (data[i].equals("Draw Mouse")) drawMouse = readBoolean(i);
+        if (data[i].equals("Style Transfer")) doStyleTransfer = readBoolean(i);
        }
     } 
     catch(Exception e) {
