@@ -1,3 +1,6 @@
 [submodule "artistic-videos"]
 	path = artistic-videos
 	url = https://github.com/n1ckfg/artistic-videos
+[submodule "neural-style-pt"]
+	path = neural-style-pt
+	url = https://github.com/n1ckfg/neural-style-pt
