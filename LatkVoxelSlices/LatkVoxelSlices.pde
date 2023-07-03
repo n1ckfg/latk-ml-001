@@ -3,6 +3,7 @@ import peasy.*;
 int subPointSteps = 5;
 boolean drawMouse = false;
 boolean selectMouse = false;
+int strokeCounter = 0;
 int sliceCounter = 0;
 color vbgColor = color(0,0);
 boolean doLoadSlices = false;
@@ -46,8 +47,6 @@ void draw() {
   controls();
   background(0);
   
-  refreshLatk();
-
   if (!doLoadSlices) {
     buildVolume();
   } else {
@@ -117,29 +116,9 @@ void loadSlices() {
 }
 
 void posCheck(){
-    if (loc.z > dim - 1) loc.z = dim - 1;
-    if (loc.z < 0) loc.z = 0;
-    if (loc.x > dim - 1) loc.x = dim - 1;
-    if (loc.x < 0) loc.x = 0;
-    if (loc.y > dim - 1) loc.y = dim - 1;
-    if (loc.y < 0) loc.y = 0;
-}
-
-void findCollision(PVector p, color c) {
-  for (int i=0;i<voxel.length;i++) {
-    for (int j=0;j<voxel[i].length;j++) {
-      for (int k=0;k<voxel[i][j].length;k++) {
-        if (!voxel[i][j][k].drawMe) {
-          //PVector hitBox = new PVector(scaleFactor, scaleFactor, scaleFactor);
-          //if (hitDetect3D(p, hitBox, voxel[i][j][k].p, hitBox)) {
-          if (hitDetect(p, voxel[i][j][k].p, scaleFactor)) {
-            voxel[i][j][k].drawMe = true;
-            voxel[i][j][k].c = c;
-          }
-        }
-      }
-    }
-  }  
+  loc.x = constrain(loc.x, 0, dim-1);
+  loc.y = constrain(loc.y, 0, dim-1);
+  loc.z = constrain(loc.z, 0, dim-1);
 }
 
 void initVolume() {
@@ -154,17 +133,20 @@ void initVolume() {
 }
 
 void buildVolume() {
-  if (strokeCounter < strokes.length) {
+  if (strokeCounter < strokes.size()) {
     if (strokeCounter==0) println("STARTED rendering volume...");
-    for (int i=1; i<strokes[strokeCounter].p.length; i++) {
-        PVector[] subPoints = pointsAlongLine(strokes[strokeCounter].p[i], strokes[strokeCounter].p[i-1], subPointSteps);
-        for (int j=0; j<subPoints.length; j++) {
-          findCollision(subPoints[j], strokes[strokeCounter].c);
-        }
+    LatkStroke stroke = strokes.get(strokeCounter);
+    for (int i=0; i<stroke.points.size(); i++) {
+      LatkPoint point = stroke.points.get(i);
+      int x = int(point.co.x * dim);
+      int y = int(point.co.y * dim);
+      int z = int(point.co.z * dim);
+      voxel[x][y][z].drawMe = true;
+      voxel[x][y][z].c = stroke.col;
     }
-    println("Stroke " + (strokeCounter + 1) + " / " + strokes.length); 
+    println("Stroke " + (strokeCounter + 1) + " / " + strokes.size()); 
     strokeCounter++;
-    if (strokeCounter >= strokes.length) {
+    if (strokeCounter >= strokes.size()) {
       saveSlices();
       println("...FINISHED rendering volume.");
       doLoadSlices = true;

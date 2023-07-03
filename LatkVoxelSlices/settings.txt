@@ -5,7 +5,7 @@ Display Scale Factor
 10
 
 Subpoint Steps
-5
+3
 
 Global Scale
 500

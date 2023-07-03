@@ -60,44 +60,6 @@ float gravity(float v1, float v2, float v3) { //y pos, floor num, gravity num
     return v1;
 }
 
-//-------------------------------
-
-/*
-//2D Hit Detect.  Assumes center.  x,y,w,h of object 1, x,y,w,h, of object 2.
-boolean hitDetect(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
-  w1 /= 2;
-  h1 /= 2;
-  w2 /= 2;
-  h2 /= 2; 
-  if(x1 + w1 >= x2 - w2 && x1 - w1 <= x2 + w2 && y1 + h1 >= y2 - h2 && y1 - h1 <= y2 + h2) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-//3D Hit Detect.  Assumes center.  xyz, whd of object 1, xyz, whd of object 2.
-boolean hitDetect3D(PVector p1, PVector s1, PVector p2, PVector s2) {
-    s1.x /= 2;
-    s1.y /= 2;
-    s1.z /= 2;
-    s2.x /= 2;
-    s2.y /= 2; 
-    s2.z /= 2; 
-    if (  p1.x + s1.x >= p2.x - s2.x && 
-          p1.x - s1.x <= p2.x + s2.x && 
-          p1.y + s1.y >= p2.y - s2.y && 
-          p1.y - s1.y <= p2.y + s2.y &&
-          p1.z + s1.z >= p2.z - s2.z && 
-          p1.z - s1.z <= p2.z + s2.z
-      ) {
-      return true;
-    } else {
-      return false;
-    }
-}
-*/
-
 boolean hitDetect(PVector p1, PVector p2, float dist) {
   if (p1.dist(p2) < dist) {
     return true;
@@ -124,6 +86,7 @@ boolean rollDice(float v1, float v2) {
   }
 }
 
+/*
 PVector pointAlongLine(PVector p1, PVector p2, float ratio) {
   float x = p1.x + (p2.x - p1.x) * ratio;
   float y = p1.y + (p2.y - p1.y) * ratio;
@@ -138,6 +101,7 @@ PVector[] pointsAlongLine(PVector p1, PVector p2, int steps) {
   }
   return p;
 }
+*/
 
 float getDist(PVector p1, PVector p2) {
   return dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
