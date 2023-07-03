@@ -72,21 +72,7 @@ void saveSlices() {
     }
     slice.updatePixels();
     slice.endDraw();
-    
-    if (doStyleTransfer) {
-      PImage styledSlice = styleInference(slice.get());
-      styledSlice.loadPixels();
-      for (int i=0; i<styledSlice.pixels.length; i++) {
-        color col = slice.pixels[i];
-        color colStyled = styledSlice.pixels[i];
-        col = color(red(colStyled), green(colStyled), blue(colStyled), alpha(col));
-        styledSlice.pixels[i] = col;
-      }
-      slice.beginDraw();
-      slice.image(styledSlice, 0, 0, slice.width, slice.height);
-      slice.endDraw();
-    }
-    
+  
     slice.save("slices/test" + k + ".png");
     println("saved img " + k);
   }
@@ -96,6 +82,21 @@ void loadSlices() {
   if (sliceCounter < voxel[0][0].length) {
     PImage slice = loadImage("slices/test" + sliceCounter + ".png");
     slice.loadPixels();
+    
+    if (doStyleTransfer) {
+      PImage styledSlice = styleInference(slice);
+      styledSlice.loadPixels();
+      
+      for (int i=0; i<styledSlice.pixels.length; i++) {
+        color col = slice.pixels[i];
+        color colStyled = styledSlice.pixels[i];
+        col = color(red(colStyled), green(colStyled), blue(colStyled), alpha(col));
+        styledSlice.pixels[i] = col;
+      }
+
+      slice = styledSlice;
+    }
+    
     for (int i=0;i<voxel.length;i++) {
       for (int j=0;j<voxel[i].length;j++) {
         int pos = i + j * voxel.length;

@@ -1,5 +1,5 @@
 Volume Size
-64
+128
 
 Display Scale Factor
 10
@@ -17,4 +17,4 @@ Draw Mouse
 true
 
 Style Transfer
-false
+true
