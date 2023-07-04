@@ -21,7 +21,7 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
     private Path model;
     private Net net;
     // todo: means are from MiDas Net
-    private Scalar mean = new Scalar(0.0, 0.0, 0.0, 0.0); //0.485, 0.456, 0.406, 0.0);
+    private Scalar mean = new Scalar(0.5, 0.5, 0.5, 0.0); //0.485, 0.456, 0.406, 0.0);
 
     public Pix2PixNetwork(Path model) {
         this.model = model;
@@ -42,7 +42,7 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
 
         // convert image into batch of images
         //Mat inputBlob = blobFromImage(frame, 1.0 / 255.0, new Size(256, 256), mean, true, false, CV_32F);
-        Mat inputBlob = blobFromImage(frame, 1.0, new Size(256, 256), mean, true, false, CV_32F);
+        Mat inputBlob = blobFromImage(frame, 0.5, new Size(256, 256), mean, true, false, CV_32F);
 
         // set input
         net.setInput(inputBlob);
