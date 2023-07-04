@@ -20,8 +20,6 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
     private Path model;
     private Net net;
-    // todo: means are from MiDas Net
-    private Scalar mean = new Scalar(0.5, 0.5, 0.5, 0.0); //0.485, 0.456, 0.406, 0.0);
 
     public Pix2PixNetwork(Path model) {
         this.model = model;
@@ -39,10 +37,10 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
     @Override
     public ImageResult run(Mat frame) {
         Size inputSize = frame.size();
+        System.out.println("Input image size: " + inputSize.width() + ", " + inputSize.height());
 
         // convert image into batch of images
-        //Mat inputBlob = blobFromImage(frame, 1.0 / 255.0, new Size(256, 256), mean, true, false, CV_32F);
-        Mat inputBlob = blobFromImage(frame, 0.5, new Size(256, 256), mean, true, false, CV_32F);
+        Mat inputBlob = blobFromImage(frame, 1.0, new Size(256, 256), new Scalar(0, 0, 0, 0), false, false, CV_32F);
 
         // set input
         net.setInput(inputBlob);
@@ -56,13 +54,12 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
         Mat output = outs.get(0);
 
         // reshape output mat
-        int height = output.size(1);
-        int width = output.size(2);
-
-        output = output.reshape(1, height);
+        output = output.reshape(1, 256);
 
         // resize output instead of PImage to avoid Processing4 problems
         resize(output, output, inputSize);
+
+        System.out.println("Output image size: " + output.size(2) + ", " + output.size(1));
 
         // todo: result a depth frame instead of a color image!
         PImage result = new PImage(inputSize.width(), inputSize.height());
