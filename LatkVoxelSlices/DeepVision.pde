@@ -28,5 +28,7 @@ PImage modelInference(PImage img) {
   println("Inferencing...");
   ImageResult result = network.run(img);
   println("...done!");
-  return result.getImage();
+  PImage returnImg = result.getImage();
+  returnImg.resize(dim, dim);
+  return returnImg;
 }
