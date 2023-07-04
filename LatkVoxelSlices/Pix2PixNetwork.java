@@ -44,7 +44,7 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
         Mat inputBlob = blobFromImage(frame,
                 // todo: is the scale factor correct?!
                 1 / 255.0,
-                new Size(256, 256),
+                new Size(384, 384),
                 mean, true, false, CV_32F);
 
         // set input
@@ -70,9 +70,9 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
         // todo: result a depth frame instead of a color image!
         PImage result = new PImage(inputSize.width(), inputSize.height());
         mapDepthToImage(output, result);
-        return new ImageResult(result);       
+        return new ImageResult(result);
     }
-       
+
     private void mapDepthToImage(Mat depthFrame, PImage img) {
         // find min / max
         DoublePointer minValuePtr = new DoublePointer(1);
