@@ -18,7 +18,7 @@ class Settings {
         if (data[i].equals("Global Scale")) globalScale = readFloat(i);
         if (data[i].equals("Load Slices on Startup")) doLoadSlices = readBoolean(i);
         if (data[i].equals("Draw Mouse")) drawMouse = readBoolean(i);
-        if (data[i].equals("Style Transfer")) doStyleTransfer = readBoolean(i);
+        if (data[i].equals("DeepVision")) doDeepVision = readBoolean(i);
        }
     } 
     catch(Exception e) {

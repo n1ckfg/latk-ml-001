@@ -8,7 +8,6 @@ int sliceCounter = 0;
 color vbgColor = color(0,0);
 boolean doLoadSlices = false;
 float globalScale = 500;
-boolean doStyleTransfer = true;
 
 PeasyCam cam;
 int dim = 64;
@@ -40,7 +39,7 @@ void setup() {
   //cam.setMinimumDistance(50);
   //cam.setMaximumDistance(500);
   
-  styleSetup();
+  modelSetup();
 }
 
 void draw() {
@@ -82,18 +81,18 @@ void loadSlices() {
     PImage slice = loadImage("slices/test" + sliceCounter + ".png");
     slice.loadPixels();
     
-    if (doStyleTransfer) {
-      PImage styledSlice = styleInference(slice);
-      styledSlice.loadPixels();
+    if (doDeepVision) {
+      PImage dvSlice = modelInference(slice);
+      dvSlice.loadPixels();
       
-      for (int i=0; i<styledSlice.pixels.length; i++) {
+      for (int i=0; i<dvSlice.pixels.length; i++) {
         color col = slice.pixels[i];
-        color colStyled = styledSlice.pixels[i];
+        color colStyled = dvSlice.pixels[i];
         col = color(red(colStyled), green(colStyled), blue(colStyled), alpha(col));
-        styledSlice.pixels[i] = col;
+        dvSlice.pixels[i] = col;
       }
 
-      slice = styledSlice;
+      slice = dvSlice;
     }
     
     for (int i=0;i<voxel.length;i++) {
