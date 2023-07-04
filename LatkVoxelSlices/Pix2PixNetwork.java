@@ -21,7 +21,7 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
     private Path model;
     private Net net;
     // todo: means are from MiDas Net
-    private Scalar mean = new Scalar(0.485, 0.456, 0.406, 0.0);
+    private Scalar mean = new Scalar(0.0, 0.0, 0.0, 0.0); //0.485, 0.456, 0.406, 0.0);
 
     public Pix2PixNetwork(Path model) {
         this.model = model;
@@ -65,16 +65,16 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
 
         // todo: result a depth frame instead of a color image!
         PImage result = new PImage(inputSize.width(), inputSize.height());
-        mapDepthToImage(output, result);
+        matToImage(output, result);
         return new ImageResult(result);
     }
 
-    private void mapDepthToImage(Mat depthFrame, PImage img) {
+    private void matToImage(Mat mat, PImage img) {
         // find min / max
         DoublePointer minValuePtr = new DoublePointer(1);
         DoublePointer maxValuePtr = new DoublePointer(1);
 
-        minMaxLoc(depthFrame, minValuePtr, maxValuePtr, null, null, null);
+        minMaxLoc(mat, minValuePtr, maxValuePtr, null, null, null);
 
         double minValue = minValuePtr.get();
         double maxValue = maxValuePtr.get();
@@ -85,8 +85,8 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
         double alpha = 1.0 / distance * 255.0;
         double beta = -1.0 * minScaled * 255.0;
 
-        depthFrame.convertTo(depthFrame, CV_8U, alpha, beta);
-        CvProcessingUtils.toPImage(depthFrame, img);
+        mat.convertTo(mat, CV_8U, alpha, beta);
+        CvProcessingUtils.toPImage(mat, img);
     }
 
     public Net getNet() {

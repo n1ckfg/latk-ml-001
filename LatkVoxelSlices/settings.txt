@@ -2,7 +2,7 @@ Volume Size
 64
 
 Display Scale Factor
-3
+20
 
 Subpoint Steps
 3

@@ -15,8 +15,6 @@ void modelSetup() {
   String url = sketchPath(new File("data", "pix2pix001_140_net_G.onnx").getPath());
   println("Loading model from " + url);
   Path model = Paths.get(url).toAbsolutePath();
-  //Path weights = Paths.get(sketchPath("../models/mask-yolov3-tiny-prn.weights")).toAbsolutePath();
-  //yolo = new YOLONetwork(model, weights, detectionSize, detectionSize);
 
   network = new Pix2PixNetwork(model);
   println("Loading model...");
