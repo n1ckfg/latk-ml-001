@@ -41,7 +41,8 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
         Size inputSize = frame.size();
 
         // convert image into batch of images
-        Mat inputBlob = blobFromImage(frame, 1 / 255.0, new Size(256, 256), mean, true, false, CV_32F);
+        //Mat inputBlob = blobFromImage(frame, 1.0 / 255.0, new Size(256, 256), mean, true, false, CV_32F);
+        Mat inputBlob = blobFromImage(frame, 1.0, new Size(256, 256), mean, true, false, CV_32F);
 
         // set input
         net.setInput(inputBlob);
