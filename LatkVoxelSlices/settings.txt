@@ -1,8 +1,8 @@
 Volume Size
-256
+128
 
 Display Scale Factor
-4
+10
 
 Subpoint Steps
 2
