@@ -37,8 +37,7 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
 
     @Override
     public ImageResult run(Mat frame) {
-        Size inputSize = frame.size();
-        System.out.println("Input image size: " + inputSize.width() + ", " + inputSize.height());
+        System.out.println("Input image size: " + frame.size().width() + ", " + frame.size().height());
 
         // convert image into batch of images
         Mat inputBlob = blobFromImage(frame, 1.0, new Size(dim, dim), new Scalar(0, 0, 0, 0), false, false, CV_32F);
@@ -52,19 +51,17 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
 
         // run detection
         net.forward(outs, outNames);
-        System.out.println("outs: " + outs.size() + ", outNames: " + outNames.size());
-
         Mat output = outs.get(0);
 
         // reshape output mat
         output = output.reshape(1, dim);
 
         // resize output instead of PImage to avoid Processing4 problems
-        resize(output, output, inputSize);
+        resize(output, output, new Size(dim, dim));
         System.out.println("Output image size: " + output.size(1) + ", " +  + output.size(0));
 
         // todo: result a depth frame instead of a color image!
-        PImage result = new PImage(inputSize.width(), inputSize.height());
+        PImage result = new PImage(dim, dim);
         matToImage(output, result);
         return new ImageResult(result);
     }

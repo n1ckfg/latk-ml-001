@@ -1,5 +1,5 @@
 Volume Size
-64
+128
 
 Display Scale Factor
 20
@@ -14,7 +14,7 @@ Load Slices on Startup
 false
 
 Draw Mouse
-true
+false
 
 DeepVision
 true
