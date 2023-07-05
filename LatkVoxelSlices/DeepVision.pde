@@ -12,7 +12,7 @@ Pix2PixNetwork network;
 void modelSetup() {
   vision = new DeepVision(this);
   
-  String url = sketchPath(new File("data", "pix2pix003_140_net_G.onnx").getPath());
+  String url = sketchPath(new File("data", "pix2pix002_140_net_G.onnx").getPath());
   println("Loading model from " + url);
   Path model = Paths.get(url).toAbsolutePath();
 
