@@ -20,7 +20,8 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
     private Path model;
     private Net net;
-
+    private int dim = 256;
+    
     public Pix2PixNetwork(Path model) {
         this.model = model;
     }
@@ -40,7 +41,7 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
         System.out.println("Input image size: " + inputSize.width() + ", " + inputSize.height());
 
         // convert image into batch of images
-        Mat inputBlob = blobFromImage(frame, 1.0, new Size(256, 256), new Scalar(0, 0, 0, 0), false, false, CV_32F);
+        Mat inputBlob = blobFromImage(frame, 1.0, new Size(dim, dim), new Scalar(0, 0, 0, 0), false, false, CV_32F);
 
         // set input
         net.setInput(inputBlob);
@@ -51,15 +52,16 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
 
         // run detection
         net.forward(outs, outNames);
+        System.out.println("outs: " + outs.size() + ", outNames: " + outNames.size());
+
         Mat output = outs.get(0);
 
         // reshape output mat
-        output = output.reshape(1, 256);
+        output = output.reshape(1, dim);
 
         // resize output instead of PImage to avoid Processing4 problems
         resize(output, output, inputSize);
-
-        System.out.println("Output image size: " + output.size(2) + ", " + output.size(1));
+        System.out.println("Output image size: " + output.size(1) + ", " +  + output.size(0));
 
         // todo: result a depth frame instead of a color image!
         PImage result = new PImage(inputSize.width(), inputSize.height());
@@ -82,7 +84,8 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
 
         double alpha = 1.0 / distance * 255.0;
         double beta = -1.0 * minScaled * 255.0;
-
+        System.out.println("alpha: " + alpha + ", beta: " + beta);
+        
         mat.convertTo(mat, CV_8U, alpha, beta);
         CvProcessingUtils.toPImage(mat, img);
     }
