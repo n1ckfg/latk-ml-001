@@ -2,10 +2,10 @@ Volume Size
 128
 
 Display Scale Factor
-20
+10
 
 Subpoint Steps
-3
+2
 
 Global Scale
 500

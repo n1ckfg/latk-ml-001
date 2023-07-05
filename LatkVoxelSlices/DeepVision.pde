@@ -21,14 +21,13 @@ void modelSetup() {
   network.setup();
 }
 
-PImage modelInference(PImage img) {
-  img.resize(256, 256);
-  
+PImage modelInference(PImage img) { 
   println("Inferencing...");
   ImageResult result = network.run(img);
   println("...done!");
   
   PImage returnImg = result.getImage();
+  returnImg = returnImg.get(0, 0, returnImg.width/3, returnImg.height/3);
   returnImg.resize(dim, dim);
   
   return returnImg;
