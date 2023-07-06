@@ -9,25 +9,27 @@ boolean doDeepVision = true;
 DeepVision vision;
 Pix2PixNetwork network;
 
+//String url = "pix2pix001_140_net_G.onnx";
+String url = "pix2pix002_140_net_G.onnx";
+//String url = "pix2pix003_140_net_G.onnx";
+//String url = "pix2pix004_140_net_G.onnx";
+
 void modelSetup() {
   vision = new DeepVision(this);
   
-  String url = sketchPath(new File("data", "pix2pix001_140_net_G.onnx").getPath());
+  url = sketchPath(new File("data", url).getPath());
+  
   println("Loading model from " + url);
   Path model = Paths.get(url).toAbsolutePath();
-
   network = new Pix2PixNetwork(model);
-  println("Loading model...");
   network.setup();
 }
 
 PImage modelInference(PImage img) { 
   println("Inferencing...");
   ImageResult result = network.run(img);
-  println("...done!");
-  
   PImage returnImg = result.getImage();
-  returnImg.resize(dim, dim);
+  println("...done!"); 
   
   return returnImg;
 }

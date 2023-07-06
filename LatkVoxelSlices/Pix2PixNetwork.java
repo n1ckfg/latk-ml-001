@@ -52,46 +52,67 @@ public class Pix2PixNetwork extends BaseNeuralNetwork<ImageResult> {
     // run detection
     net.forward(outs, outNames);
     Mat output = outs.get(0);
-
+    
     // reshape output mat
-    output = output.reshape(1, dim);
-
-    // resize output instead of PImage to avoid Processing4 problems
-    resize(output, output, new Size(dim, dim));
-    System.out.println("Output image size: " + output.size(1) + ", " +  + output.size(0));
-
-    output = output.mul(output, 0.5).asMat();
-    output = add(new Scalar(0.5), output).asMat();
-    output = output.mul(output, 255).asMat(); 
-
-    // todo: result a depth frame instead of a color image!
-    PImage result = new PImage(dim, dim);
+    System.out.println("Output size raw: " + output.size().width() + ", " + output.size().height());
+    output = output.reshape(0, 768);
+    System.out.println("Output size reshaped: " + output.size().width() + ", " + output.size().height());
+           
+    PImage result = new PImage(dim, dim*3);
     matToImage(output, result);
-    return new ImageResult(result);
+    
+    PImage redChannel = result.get(0, 0, 256, 256);
+    redChannel.loadPixels();
+    PImage greenChannel = result.get(0, 256, 256, 256);
+    greenChannel.loadPixels();
+    PImage blueChannel = result.get(0, 512, 256, 256);
+    blueChannel.loadPixels();
+
+    PImage returns = new PImage(dim, dim);
+    returns.loadPixels();    
+    for (int i=0; i<returns.pixels.length; i++) {
+      int r = red(redChannel.pixels[i]);
+      int g = green(greenChannel.pixels[i]);
+      int b = blue(blueChannel.pixels[i]);
+      int a = alpha(returns.pixels[i]);
+      returns.pixels[i] = color(r, g, b, a);
+    }
+    returns.updatePixels();
+   
+    return new ImageResult(returns);
   }
-
+ 
   private void matToImage(Mat mat, PImage img) {
-      // find min / max
-      DoublePointer minValuePtr = new DoublePointer(1);
-      DoublePointer maxValuePtr = new DoublePointer(1);
-
-      minMaxLoc(mat, minValuePtr, maxValuePtr, null, null, null);
-
-      double minValue = minValuePtr.get();
-      double maxValue = maxValuePtr.get();
-
-      double distance = maxValue - minValue;
-      double minScaled = minValue / distance;
-
-      double alpha = 1.0 / distance * 255.0;
-      double beta = -1.0 * minScaled * 255.0;
-      System.out.println("alpha: " + alpha + ", beta: " + beta);
-      
-      mat.convertTo(mat, CV_8U, alpha, beta);
-      CvProcessingUtils.toPImage(mat, img);
+    mat = multiply(mat, 0.5).asMat();
+    mat = add(mat, new Scalar(0.5)).asMat();
+    mat = multiply(mat, 255).asMat();
+    
+    mat.convertTo(mat, CV_8U);
+    CvProcessingUtils.toPImage(mat, img);
   }
 
   public Net getNet() {
     return net;
   }
+  
+  private int color(int r, int g, int b, int a) {
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  private int red(int c) {
+    return (c >> 16) & 0xFF;
+  }
+  
+  private int green(int c) {
+    return (c >> 8) & 0xFF;
+  }
+  
+  private int blue(int c) {
+    return c & 0xFF;
+  }
+
+  private int alpha(int c) {
+    return (c >> 24) & 0xFF;
+  }
+  
 }

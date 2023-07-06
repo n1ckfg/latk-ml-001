@@ -83,6 +83,7 @@ void loadSlices() {
     
     if (doDeepVision) {
       PImage dvSlice = modelInference(slice);
+      dvSlice.resize(dim, dim);
       dvSlice.save(sketchPath("slices/test" + sliceCounter + ".png"));
       dvSlice.loadPixels();
       
